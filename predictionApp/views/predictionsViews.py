@@ -14,6 +14,7 @@ class PredictionCreateView(generics.CreateAPIView):
     serializer_class   = PredictionSerializer
     permission_classes = (IsAuthenticated,)
     
+    lookup_field = 'user'
     def post(self, request, *args, **kwargs):
         token        = request.META.get('HTTP_AUTHORIZATION')[7:]
         tokenBackend = TokenBackend(algorithm=settings.SIMPLE_JWT['ALGORITHM'])
@@ -21,13 +22,13 @@ class PredictionCreateView(generics.CreateAPIView):
         
         print(request,'\n',kwargs)
         
-        if valid_data['user_id'] != kwargs['fk']:#request.data['user_id']:
+        if valid_data['user_id'] != kwargs['user']:#request.data['user_id']:
             stringResponse = {'detail':'Unauthorized Request'}
             return Response(stringResponse, status=status.HTTP_401_UNAUTHORIZED)
         
         #XGB prediction on data
         print('\n'*2,request.data,'\n'*2,type(request.data['prediction_data']['bmi']))
-        request.data['prediction_data']['user_id'] = kwargs['fk']
+        request.data['prediction_data']['user_id'] = kwargs['user']
         rta = make_prediction(request.data['prediction_data'])
         
         serializer = PredictionSerializer(data=rta)
@@ -51,4 +52,20 @@ class ListPredictionsViews(generics.ListAPIView):
             return Response(stringResponse, status=status.HTTP_401_UNAUTHORIZED)
         
         queryset = Prediction.objects.filter(user_id=self.kwargs['user'])
+        return queryset
+    
+class PredictionDeleteView(generics.DestroyAPIView):
+    serializer_class   = PredictionSerializer
+    permission_classes = (IsAuthenticated,)
+    lookup_field = 'user'
+    
+    def get_queryset(self):
+        token        = self.request.META.get('HTTP_AUTHORIZATION')[7:]
+        tokenBackend = TokenBackend(algorithm=settings.SIMPLE_JWT['ALGORITHM'])
+        valid_data   = tokenBackend.decode(token,verify=False)
+        
+        if valid_data['user_id'] != self.kwargs['user']:
+            stringResponse = {'detail':'Unauthorized Request'}
+            return Response(stringResponse, status=status.HTTP_401_UNAUTHORIZED)
+        queryset = Prediction.objects.filter(user_id=self.kwargs['user'],id=self.request.data['id'])
         return queryset
