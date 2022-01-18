@@ -1,9 +1,13 @@
 # DiabetesProject_backend
 django backend build up for a diabetes prediction app employing xgboost
 
+## The entire backend project is deployed on Heroku, if you want to use it, go to the next URL:
+https://diabetes-app-v-1.herokuapp.com/ 
+
+(This is only the backend API, if you want to user a graphic interface go to the frontend repository of this project https://github.com/jafetsierra/diabetesProject_frontend )
 
 
-## Run this app
+## Run this app in your pc as a server 
 
 ### Clone the repository and do the following comands:
 
