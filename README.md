@@ -1,5 +1,5 @@
 # DiabetesProject_backend
-django backend build up for a diabetes prediction app employing xgboost
+django backend build up for a diabetes prediction app employing xgboost as a classifier.
 
 ## The entire backend project is deployed on Heroku, if you want to use it, go to the next URL:
 https://diabetes-app-v-1.herokuapp.com/ 
